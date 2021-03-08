@@ -17,7 +17,6 @@ class SceneFile(object):
         scene = pnc.system.sceneName()
         if not path:
             path = scene
-            print(path)
         if not path and not scene:
             log.warning("Unable to initialize SceneFile object from a new"
                         "scene. Please specify a path.")
@@ -52,9 +51,22 @@ class SceneFile(object):
             self.folder_path.makedirs_p()
             return pnc.system.saveAs(self.path)
 
+    def next_avail_ver(self):
+        """return next available version num in folder"""
+        pattern = "{descriptor}_{task}_v*{ext}".format(
+            descriptor=self.descriptor,
+            task=self.task,
+            ext=self.ext)
+        matching_scenefiles = []
+        for file_ in self.folder_path.files():
+            if file_.name.fnmatch(pattern):
+                matching_scenefiles.append(file_)
+        matching_scenefiles.sort(reverse=True)
+        
+
     def increment_save(self):
         """Increments version and saves scene file
         should increment from largest version number in folder.
         Returns path of scene file if successful"""
-        self.ver += 1
+        self.ver = self.next_avail_ver()
         self.save()

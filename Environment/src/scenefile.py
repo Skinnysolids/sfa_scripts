@@ -78,3 +78,7 @@ class SceneFile(object):
         Returns path of scene file if successful"""
         self.ver = self.next_avail_ver()
         self.save()
+
+
+scene_file = SceneFile("C/noname_notask_v000.ma")
+#print(scene_file.path())

@@ -20,7 +20,7 @@ class SceneFile(object):
         if not path and not scene:
             log.warning("Unable to initialize SceneFile object from a new"
                         "scene. Please specify a path.")
-        print(path)
+            return
         self._init_from_path(path)
 
     @property

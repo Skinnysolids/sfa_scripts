@@ -20,11 +20,12 @@ class SceneFile(object):
         if not path and not scene:
             log.warning("Unable to initialize SceneFile object from a new"
                         "scene. Please specify a path.")
-            return
+        print(path)
         self._init_from_path(path)
 
     @property
     def filename(self):
+        """returns properly formatted filename"""
         pattern = "{descriptor}_{task}_v{ver:03d}{ext}"
         return pattern.format(descriptor=self.descriptor,
                               task=self.task,
@@ -33,9 +34,11 @@ class SceneFile(object):
 
     @property
     def path(self):
+        """returns path of file"""
         return self.folder_path / self.filename
 
     def _init_from_path(self, path):
+        """creates the necessary variables from a path"""
         path = Path(path)
         self.folder_path = path.parent
         self.ext = path.ext
@@ -68,9 +71,6 @@ class SceneFile(object):
         latest_scenefile = latest_scenefile.name.stripext()
         latest_version_num = int(latest_scenefile.split("_v")[-1])
         return latest_version_num + 1
-
-
-
 
     def increment_save(self):
         """Increments version and saves scene file

@@ -1,4 +1,11 @@
-from Pyside2 import QWidgets
+import maya.OpenMayaUI as omui
+from PySide2 import QtWidgets
+from shiboken2 import wrapInstance
+
+def maya_main_window()
+    """return maya main window widget"""
+    main_windows = omui.MQUtil.mainWindow()
+    return wrapInstance(long(main_window), QtWidgets.QWidget)
 
 class SimpleUI(QtWidgets.QDialog):
     """simple UI class"""
@@ -8,5 +15,5 @@ class SimpleUI(QtWidgets.QDialog):
         # This passes SimpleUI as an argument in super()
         # That futureproofs this code
         # super just instantiates the parent of SimpleUI
-        super(SimpleUI, self).__init__()
-        self.setWindowTitle("A simple UI")
+        super(SimpleUI, self).__init__(parent=maya_main_window())
+        self.setWindowTitle("A Simple UI")

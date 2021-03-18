@@ -11,6 +11,7 @@ log = logging.getLogger(__name__)
 
 
 def maya_main_window():
+    """return the maya main window widget"""
     main_window = omui.MQtUtil.mainWindow()
     return wrapInstance(long(main_window), QtWidgets.QWidget)
 

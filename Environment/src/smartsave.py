@@ -100,17 +100,28 @@ class SmartSaveUI(QtWidgets.QDialog):
     def create_connections(self):
         """connect our widget signals to slots"""
         self.cancel_btn.clicked.connect(self.cancel)
-        self.folder_browse_btn.clicked.connect(self.browse_dir)
+        self.folder_browse_btn.clicked.connect(self.browse_folder)
+        self.save_btn.clicked.connect(self._save)
 
-    def browse_dir(self):
-        dir = QtWidgets.QFileDialog.getExistingDirectory(
-            self, caption="Select Directory",
+    @QtCore.Slot()
+    def _save(self):
+        """Save the scene"""
+        self.scenefile.folder_path = self.folder_le.text()
+        self.scenefile.descriptor = self.descriptor_le.text()
+        self.scenefile.task = self.task_le.text()
+        self.scenefile.ver = self.ver_sbx.value()
+        self.scenefile.ext = self.ext_lbl.text()
+        self.scenefile.save()
+
+    def browse_folder(self):
+        """Open a dialogue box to browse the folder"""
+        folder = QtWidgets.QFileDialog.getExistingDirectory(
+            parent=self,
+            caption="Select Directory",
             dir=self.folder_le.text(),
             options=QtWidgets.QFileDialog.ShowDirsOnly |
                     QtWidgets.QFileDialog.DontResolveSymlinks)
-        self.folder_le = setText(dir)
-
-
+        self.folder_le.setText(folder)
 
     @QtCore.Slot()
     def cancel(self):
@@ -118,11 +129,10 @@ class SmartSaveUI(QtWidgets.QDialog):
         self.close()
 
 
-
 class SceneFile(object):
     """An abstract representation of a Scene file."""
     def __init__(self, path=None):
-        self.folder_path = Path(cmds.workspace(query=True,
+        self._folder_path = Path(cmds.workspace(query=True,
                                                rootDirectory=True)) / "scenes"
         self.descriptor = 'main'
         self.task = 'model'
@@ -135,6 +145,15 @@ class SceneFile(object):
             log.info("Initialize with default properties")
             return
         self._init_from_path(path)
+
+    @property
+    def folder_path(self):
+        return self._folder_path
+
+    @folder_path.setter
+    def folder_path(self, val):
+        self._folder_path = Path(val)
+
 
     @property
     def filename(self):

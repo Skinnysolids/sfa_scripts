@@ -1,6 +1,7 @@
 import logging
 
 from PySide2 import QtWidgets, QtCore
+from PySide2.QtWidgets import QFileDialog
 from shiboken2 import wrapInstance
 import maya.OpenMayaUI as omui
 import maya.cmds as cmds
@@ -27,6 +28,7 @@ class SmartSaveUI(QtWidgets.QDialog):
         self.setWindowFlags(self.windowFlags() ^
                             QtCore.Qt.WindowContextHelpButtonHint)
         self.create_ui()
+        self.create_connections()
 
     def create_ui(self):
         self.title_lbl = QtWidgets.QLabel("Smart Save")
@@ -45,9 +47,11 @@ class SmartSaveUI(QtWidgets.QDialog):
     def _create_button_ui(self):
         self.save_btn = QtWidgets.QPushButton("Save")
         self.save_increment_btn = QtWidgets.QPushButton("Save Increment")
+        self.cancel_btn = QtWidgets.QPushButton("Cancel")
         layout = QtWidgets.QHBoxLayout()
         layout.addWidget(self.save_btn)
         layout.addWidget(self.save_increment_btn)
+        layout.addWidget(self.cancel_btn)
         return layout
 
     def _create_filename_ui(self):
@@ -91,6 +95,27 @@ class SmartSaveUI(QtWidgets.QDialog):
         layout.addWidget(self.folder_le)
         layout.addWidget(self.folder_browse_btn)
         return layout
+
+    def create_connections(self):
+        """connect our widget signals to slots"""
+        self.cancel_btn.clicked.connect(self.cancel)
+        self.folder_browse_btn.clicked.connect(self.browse_dir)
+
+    def browse_dir(self):
+        dir = QtWidgets.QFileDialog.getExistingDirectory(
+            self, caption="Select Directory",
+            dir=self.folder_le.text(),
+            options=QtWidgets.QFileDialog.ShowDirsOnly |
+                    QtWidgets.QFileDialog.DontResolveSymlinks)
+        self.folder_le = setText(dir)
+
+
+
+    @QtCore.Slot()
+    def cancel(self):
+        """quits the dialogue"""
+        self.close()
+
 
 
 class SceneFile(object):

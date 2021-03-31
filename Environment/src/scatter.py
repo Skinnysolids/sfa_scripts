@@ -17,6 +17,7 @@ def maya_main_window():
     main_window = omui.MQtUtil.mainWindow()
     return wrapInstance(long(main_window), QtWidgets.QWidget)
 
+
 class ScatterTool(QtWidgets.QDialog):
     """SmartSave UI Class"""
     def __init__(self):
@@ -33,6 +34,7 @@ class ScatterTool(QtWidgets.QDialog):
     def create_ui(self):
         self.title_lbl = QtWidgets.QLabel("Scatter Tool")
         self.title_lbl.setStyleSheet("font: bold 28px")
+        self.select_note = self._create_select_note()
         self.button_lay = self._create_button_ui()
         self.objchoose = self._create_obj_choose()
         self.randomscale = self._create_random_scale()
@@ -40,6 +42,7 @@ class ScatterTool(QtWidgets.QDialog):
         self.main_lay = QtWidgets.QVBoxLayout()
         self.main_lay.addWidget(self.title_lbl)
         self.main_lay.addStretch()
+        self.main_lay.addLayout(self.select_note)
         self.main_lay.addLayout(self.objchoose)
         self.main_lay.addLayout(self.randomscale)
         self.main_lay.addLayout(self.randomrotation)
@@ -47,10 +50,19 @@ class ScatterTool(QtWidgets.QDialog):
         self.main_lay.addLayout(self.button_lay)
         self.setLayout(self.main_lay)
 
+    def _create_select_note(self):
+        self.note = QtWidgets.QLabel("Note: When multiple objects are "
+                                     "selected, the Select buttons "
+                                     "will only choose the first object "
+                                     "in that selection.")
+        layout = QtWidgets.QHBoxLayout()
+        layout.addWidget(self.note)
+        return layout
+
     def _create_random_rotation(self):
         """creates a random rotation editable text box"""
         self.random_rot_label = QtWidgets.QLabel("Random Rotation "
-                                                   "(numbers only please) :")
+                                                 "(numbers only please) :")
         self.rand_rot = QtWidgets.QLineEdit("1")
         layout = QtWidgets.QHBoxLayout()
         layout.addWidget(self.random_rot_label)
@@ -93,7 +105,29 @@ class ScatterTool(QtWidgets.QDialog):
         layout.addWidget(self.cancel_btn)
         return layout
 
-
     def create_connections(self):
         """TO DO: CONNECT THE BUTTONS"""
-        pass
+        self.cancel_btn.clicked.connect(self.cancel)
+
+        self.to_scatter_button.clicked.connect(self.select_to_scatter)
+        self.scatter_on_button.clicked.connect(self.select_scatter_on)
+
+    @QtCore.Slot()
+    def select_to_scatter(self):
+        self.select(self.to_scatter)
+
+    @QtCore.Slot()
+    def select_scatter_on(self):
+        self.select(self.scatter_on)
+
+    def select(self, line_edit_box):
+        """Take the first obj in the list of everything selected and
+        put it in the dialogue box given as an argument"""
+        self.selected_objs = cmds.ls(sl=True)
+        self.first_obj_selected = self.selected_objs[0]
+        line_edit_box.setText(self.first_obj_selected)
+
+    @QtCore.Slot()
+    def cancel(self):
+        """quits the dialogue"""
+        self.close()

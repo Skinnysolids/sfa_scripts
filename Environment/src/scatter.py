@@ -19,12 +19,14 @@ def maya_main_window():
 
 
 class ScatterTool(QtWidgets.QDialog):
-    """SmartSave UI Class"""
+    """ScatterTool UI Class"""
     def __init__(self):
         super(ScatterTool, self).__init__(parent=maya_main_window())
         self.setWindowTitle("Scatter Tool")
         self.setMinimumWidth(500)
         self.setMaximumHeight(300)
+        self.obj_to_scatter = ''
+        self.obj_to_scatter_on = ''
         self.setWindowFlags(self.windowFlags() ^
                             QtCore.Qt.WindowContextHelpButtonHint)
         self.create_ui()
@@ -98,10 +100,10 @@ class ScatterTool(QtWidgets.QDialog):
         return layout
 
     def _create_button_ui(self):
-        self.save_btn = QtWidgets.QPushButton("Scatter")
+        self.scat_btn = QtWidgets.QPushButton("Scatter")
         self.cancel_btn = QtWidgets.QPushButton("Cancel")
         layout = QtWidgets.QHBoxLayout()
-        layout.addWidget(self.save_btn)
+        layout.addWidget(self.scat_btn)
         layout.addWidget(self.cancel_btn)
         return layout
 
@@ -112,20 +114,23 @@ class ScatterTool(QtWidgets.QDialog):
         self.to_scatter_button.clicked.connect(self.select_to_scatter)
         self.scatter_on_button.clicked.connect(self.select_scatter_on)
 
+        self.scat_btn.clicked.connect(self.Do_Scatter)
+
+    @QtCore.Slot()
+    def Do_Scatter(self):
+        pass
+
     @QtCore.Slot()
     def select_to_scatter(self):
-        self.select(self.to_scatter)
+        self.selected_objs = cmds.ls(sl=True)
+        self.obj_to_scatter = self.selected_objs[0]
+        line_edit_box.setText(self.obj_to_scatter)
 
     @QtCore.Slot()
     def select_scatter_on(self):
-        self.select(self.scatter_on)
-
-    def select(self, line_edit_box):
-        """Take the first obj in the list of everything selected and
-        put it in the dialogue box given as an argument"""
         self.selected_objs = cmds.ls(sl=True)
-        self.first_obj_selected = self.selected_objs[0]
-        line_edit_box.setText(self.first_obj_selected)
+        self.obj_to_scatter_on = self.selected_objs[0]
+        line_edit_box.setText(self.obj_to_scatter_on)
 
     @QtCore.Slot()
     def cancel(self):

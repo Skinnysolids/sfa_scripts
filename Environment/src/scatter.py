@@ -129,7 +129,10 @@ class ScatterUI(QtWidgets.QDialog):
 
     @QtCore.Slot()
     def scatter(self):
-        pass
+        self.scat.set_scale_and_rot(self.rand_scale_max.text(),
+                                    self.rand_scale_min.text(),
+                                    self.rand_rot_max.text(),
+                                    self.rand_rot_min.text())
 
     @QtCore.Slot()
     def select_to_scatter_obj(self):
@@ -164,8 +167,12 @@ class Scatter(object):
         self.rot_max = 180
         self.rot_min = 0
 
-    def Scatter(self):
-        pass
+    def set_scale_and_rot(self, scalemax, scalemin, rotmax, rotmin):
+        self.scale_max = float(scalemax)
+        self.scale_min = float(scalemin)
+        self.rot_max = float(rotmax)
+        self.rot_min = float(rotmin)
+
 
     def random_scale_instance(self):
         pass
@@ -180,7 +187,6 @@ class Scatter(object):
             self.obj_to_scatter, toVertex=True)
         return str(self.verts_to_scatter_on)
 
-
     def select_verts_to_scatter_to(self):
         self.verts_to_scatter_on = cmds.ls(sl=True, flatten=True)
         return str(self.verts_to_scatter_on)
@@ -189,3 +195,6 @@ class Scatter(object):
         self.selected_objs = cmds.ls(sl=True)
         self.obj_to_scatter_on = self.selected_objs[0]
         return str(self.obj_to_scatter_on)
+
+    def Scatter(self):
+        pass

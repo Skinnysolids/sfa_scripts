@@ -3,6 +3,7 @@ import logging
 from PySide2 import QtWidgets, QtCore
 from PySide2.QtWidgets import QFileDialog
 from shiboken2 import wrapInstance
+import maya.OpenMaya as om
 import maya.OpenMayaUI as omui
 import maya.cmds as cmds
 import pymel.core as pnc
@@ -27,6 +28,7 @@ class ScatterTool(QtWidgets.QDialog):
         self.setMaximumHeight(300)
         self.obj_to_scatter = ''
         self.obj_to_scatter_on = ''
+        self.verts_to_scatter_on = ''
         self.setWindowFlags(self.windowFlags() ^
                             QtCore.Qt.WindowContextHelpButtonHint)
         self.create_ui()
@@ -87,16 +89,18 @@ class ScatterTool(QtWidgets.QDialog):
         self.to_scatter_label = QtWidgets.QLabel("Obj to Scatter:")
         self.scatter_on_label = QtWidgets.QLabel("Obj to Scatter On:")
         self.to_scatter = QtWidgets.QLineEdit()
-        self.to_scatter_button = QtWidgets.QPushButton("Select")
+        self.to_scatter_object_button = QtWidgets.QPushButton("Select Object")
+        self.to_scatter_verts_button = QtWidgets.QPushButton("Select Vertices")
         self.scatter_on = QtWidgets.QLineEdit()
-        self.scatter_on_button = QtWidgets.QPushButton("Select")
+        self.scatter_on_object_button = QtWidgets.QPushButton("Select")
         layout = QtWidgets.QHBoxLayout()
         layout.addWidget(self.to_scatter_label)
         layout.addWidget(self.to_scatter)
-        layout.addWidget(self.to_scatter_button)
+        layout.addWidget(self.to_scatter_object_button)
+        layout.addWidget(self.to_scatter_verts_button)
         layout.addWidget(self.scatter_on_label)
         layout.addWidget(self.scatter_on)
-        layout.addWidget(self.scatter_on_button)
+        layout.addWidget(self.scatter_on_object_button)
         return layout
 
     def _create_button_ui(self):
@@ -111,26 +115,45 @@ class ScatterTool(QtWidgets.QDialog):
         """TO DO: CONNECT THE BUTTONS"""
         self.cancel_btn.clicked.connect(self.cancel)
 
-        self.to_scatter_button.clicked.connect(self.select_to_scatter)
+        self.to_scatter_object_button.clicked.connect\
+            (self.select_to_scatter_obj)
+        self.to_scatter_verts_button.clicked.connect\
+            (self.select_to_scatter_verts)
         self.scatter_on_button.clicked.connect(self.select_scatter_on)
 
         self.scat_btn.clicked.connect(self.Do_Scatter)
 
     @QtCore.Slot()
     def Do_Scatter(self):
-        pass
+        self.list_of_verts = cmds.ls(self.obj_to_scatter_on + ".vtx[*]",
+                                     flatten=True)
+        # for self.selected_vertex in self.list_of_verts:
+        self.instanced_obj = cmds.instance(self.obj_to_scatter)
+        self.pos = cmds.xform \
+            ([self.obj_to_scatter_on.vtx[self.selected_vertex]],
+             query=True, translation=True)
+        cmds.move(pos[0], pos[1], pos[2])
 
     @QtCore.Slot()
-    def select_to_scatter(self):
+    def select_to_scatter_obj(self):
+        #TODO create error thingie if user selected verts and then pressed
+        #this button
         self.selected_objs = cmds.ls(sl=True)
         self.obj_to_scatter = self.selected_objs[0]
-        line_edit_box.setText(self.obj_to_scatter)
+        self.to_scatter.setText(self.obj_to_scatter)
+
+    @QtCore.Slot()
+    def select_to_scatter_verts(self):
+        # TODO create error thingie if user selected verts and then pressed
+        # this button
+        self.verts_to_scatter_on = cmds.ls(sl=True)
+        self.to_scatter.setText(self.verts_to_scatter_on)
 
     @QtCore.Slot()
     def select_scatter_on(self):
         self.selected_objs = cmds.ls(sl=True)
         self.obj_to_scatter_on = self.selected_objs[0]
-        line_edit_box.setText(self.obj_to_scatter_on)
+        self.scatter_on.setText(self.obj_to_scatter_on)
 
     @QtCore.Slot()
     def cancel(self):

@@ -40,15 +40,19 @@ class ScatterUI(QtWidgets.QDialog):
         self.select_note = self._create_select_note()
         self.button_lay = self._create_button_ui()
         self.objchoose = self._create_obj_choose()
-        self.randomscale = self._create_random_scale()
-        self.randomrotation = self._create_random_rotation()
+        self.randomscalemax = self._create_random_scale_max()
+        self.randomscalemin = self._create_random_scale_min()
+        self.randomrotationmax = self._create_random_rotation_max()
+        self.randomrotationmin = self._create_random_rotation_min()
         self.main_lay = QtWidgets.QVBoxLayout()
         self.main_lay.addWidget(self.title_lbl)
         self.main_lay.addStretch()
         self.main_lay.addLayout(self.select_note)
         self.main_lay.addLayout(self.objchoose)
-        self.main_lay.addLayout(self.randomscale)
-        self.main_lay.addLayout(self.randomrotation)
+        self.main_lay.addLayout(self.randomscalemax)
+        self.main_lay.addLayout(self.randomscalemin)
+        self.main_lay.addLayout(self.randomrotationmax)
+        self.main_lay.addLayout(self.randomrotationmin)
         self.main_lay.addStretch()
         self.main_lay.addLayout(self.button_lay)
         self.setLayout(self.main_lay)
@@ -62,31 +66,72 @@ class ScatterUI(QtWidgets.QDialog):
         layout.addWidget(self.note)
         return layout
 
-    def _create_random_rotation(self):
+    def _create_random_rotation_max(self):
         """creates a random rotation editable text box"""
-        self.random_rot_max_label = QtWidgets.QLabel("Random Rotation Max")
-        self.rand_rot_max = QtWidgets.QLineEdit("180")
-        self.random_rot_min_label = QtWidgets.QLabel("Random Rotation Min")
-        self.rand_rot_min = QtWidgets.QLineEdit("0")
+        self.random_rot_max_label_x = QtWidgets.QLabel("Random Rotation Max")
+        self.random_rot_max_label_y = QtWidgets.QLabel("Random Rotation Max")
+        self.random_rot_max_label_z = QtWidgets.QLabel("Random Rotation Max")
+        self.rand_rot_max_x = QtWidgets.QLineEdit("180")
+        self.rand_rot_max_y = QtWidgets.QLineEdit("180")
+        self.rand_rot_max_z = QtWidgets.QLineEdit("180")
         layout = QtWidgets.QHBoxLayout()
-        layout.addWidget(self.random_rot_max_label)
-        layout.addWidget(self.rand_rot_max)
-        layout.addWidget(self.random_rot_min_label)
-        layout.addWidget(self.rand_rot_min)
+        layout.addWidget(self.random_rot_max_label_x)
+        layout.addWidget(self.rand_rot_max_x)
+        layout.addWidget(self.random_rot_max_label_y)
+        layout.addWidget(self.rand_rot_max_y)
+        layout.addWidget(self.random_rot_max_label_z)
+        layout.addWidget(self.rand_rot_max_z)
         return layout
 
-    def _create_random_scale(self):
-        """creates a random scale editable text box"""
-        self.random_scale_max_label = QtWidgets.QLabel("Random Scale Max ")
-        self.random_scale_min_Label = QtWidgets.QLabel("Random Scale Min")
-        self.rand_scale_max = QtWidgets.QLineEdit("2")
-        self.rand_scale_min = QtWidgets.QLineEdit(".5")
+    def _create_random_rotation_min(self):
+        self.random_rot_min_label_x = QtWidgets.QLabel("Random Rotation Min X")
+        self.random_rot_min_label_y = QtWidgets.QLabel("Random Rotation Min Y")
+        self.random_rot_min_label_z = QtWidgets.QLabel("Random Rotation Min Z")
+        self.rand_rot_min_x = QtWidgets.QLineEdit("0")
+        self.rand_rot_min_y = QtWidgets.QLineEdit("0")
+        self.rand_rot_min_z = QtWidgets.QLineEdit("0")
         layout = QtWidgets.QHBoxLayout()
-        layout.addWidget(self.random_scale_max_label)
-        layout.addWidget(self.rand_scale_max)
-        layout.addWidget(self.random_scale_min_Label)
-        layout.addWidget(self.rand_scale_min)
+        layout.addWidget(self.random_rot_min_label_x)
+        layout.addWidget(self.rand_rot_min_x)
+        layout.addWidget(self.random_rot_min_label_y)
+        layout.addWidget(self.rand_rot_min_y)
+        layout.addWidget(self.random_rot_min_label_z)
+        layout.addWidget(self.rand_rot_min_z)
         return layout
+
+    def _create_random_scale_max(self):
+        """creates a random scale editable text box"""
+        self.random_scale_max_label_x = QtWidgets.QLabel("Random Scale Max X")
+        self.random_scale_max_label_y = QtWidgets.QLabel("Random Scale Max Y")
+        self.random_scale_max_label_z = QtWidgets.QLabel("Random Scale Max Z")
+        self.rand_scale_max_x = QtWidgets.QLineEdit("2")
+        self.rand_scale_max_y = QtWidgets.QLineEdit("2")
+        self.rand_scale_max_z = QtWidgets.QLineEdit("2")
+        layout = QtWidgets.QHBoxLayout()
+        layout.addWidget(self.random_scale_max_label_x)
+        layout.addWidget(self.rand_scale_max_x)
+        layout.addWidget(self.random_scale_max_label_y)
+        layout.addWidget(self.rand_scale_max_y)
+        layout.addWidget(self.random_scale_max_label_z)
+        layout.addWidget(self.rand_scale_max_z)
+        return layout
+
+    def _create_random_scale_min(self):
+        self.random_scale_min_Label_x = QtWidgets.QLabel("Random Scale Min X")
+        self.random_scale_min_Label_y = QtWidgets.QLabel("Random Scale Min Y")
+        self.random_scale_min_Label_z = QtWidgets.QLabel("Random Scale Min Z")
+        self.rand_scale_min_x = QtWidgets.QLineEdit(".5")
+        self.rand_scale_min_y = QtWidgets.QLineEdit(".5")
+        self.rand_scale_min_z = QtWidgets.QLineEdit(".5")
+        layout = QtWidgets.QHBoxLayout()
+        layout.addWidget(self.random_scale_min_Label_x)
+        layout.addWidget(self.rand_scale_min_x)
+        layout.addWidget(self.random_scale_min_Label_y)
+        layout.addWidget(self.rand_scale_min_y)
+        layout.addWidget(self.random_scale_min_Label_z)
+        layout.addWidget(self.rand_scale_min_z)
+        return layout
+
 
     def _create_obj_choose(self):
         """This creates two combobox select menus for selecting recipient
@@ -126,10 +171,18 @@ class ScatterUI(QtWidgets.QDialog):
 
     @QtCore.Slot()
     def scatter(self):
-        self.scat.set_scale_and_rot(self.rand_scale_max.text(),
-                                    self.rand_scale_min.text(),
-                                    self.rand_rot_max.text(),
-                                    self.rand_rot_min.text())
+        self.scat.set_scale_and_rot_x(self.rand_scale_max_x.text(),
+                                      self.rand_scale_min_x.text(),
+                                      self.rand_rot_max_x.text(),
+                                      self.rand_rot_min_x.text())
+        self.scat.set_scale_and_rot_y(self.rand_scale_max_y.text(),
+                                      self.rand_scale_min_y.text(),
+                                      self.rand_rot_max_y.text(),
+                                      self.rand_rot_min_y.text())
+        self.scat.set_scale_and_rot_z(self.rand_scale_max_z.text(),
+                                      self.rand_scale_min_z.text(),
+                                      self.rand_rot_max_z.text(),
+                                      self.rand_rot_min_z.text())
         self.scat.scatter_func()
 
     @QtCore.Slot()
@@ -159,32 +212,63 @@ class Scatter(object):
         self.obj_to_scatter = ''
         self.obj_to_scatter_on = ''
         self.verts_to_scatter_on = ''
-        self.scale_max = 2
-        self.scale_min = 0.5
-        self.rot_max = 180
-        self.rot_min = 0
+        self.scale_max_x = 2
+        self.scale_max_y = 2
+        self.scale_max_z = 2
+        self.scale_min_x = 0.5
+        self.scale_min_y = 0.5
+        self.scale_min_z = 0.5
+        self.rot_max_x = 180
+        self.rot_max_y = 180
+        self.rot_max_z = 180
+        self.rot_min_x = 0
+        self.rot_min_y = 0
+        self.rot_min_z = 0
 
-    def set_scale_and_rot(self, scalemax, scalemin, rotmax, rotmin):
-        self.scale_max = float(scalemax)
-        self.scale_min = float(scalemin)
-        self.rot_max = float(rotmax)
-        self.rot_min = float(rotmin)
+    def set_scale_and_rot_x(self, scalemax, scalemin, rotmax, rotmin):
+        self.scale_max_x = float(scalemax)
+        self.scale_min_x = float(scalemin)
+        self.rot_max_x = float(rotmax)
+        self.rot_min_x = float(rotmin)
+
+    def set_scale_and_rot_y(self, scalemax, scalemin, rotmax, rotmin):
+        self.scale_max_y = float(scalemax)
+        self.scale_min_y = float(scalemin)
+        self.rot_max_y = float(rotmax)
+        self.rot_min_y = float(rotmin)
+        pass
+
+    def set_scale_and_rot_z(self, scalemax, scalemin, rotmax, rotmin):
+        self.scale_max_z = float(scalemax)
+        self.scale_min_z = float(scalemin)
+        self.rot_max_z = float(rotmax)
+        self.rot_min_z = float(rotmin)
+        pass
 
     def random_scale_instance(self, instance):
-        scale_random = rand.random()
-        old_range = (1 - 0)
-        new_range = self.scale_max - self.scale_min
-        scale_val = (((scale_random - 0) * new_range) / old_range) + \
-            self.scale_min
-
-        cmds.scale(scale_val, scale_val, scale_val, instance)
+        random_x = self.random_change_in_direction(self.scale_max_x,
+                                                   self.scale_min_x)
+        random_y = self.random_change_in_direction(self.scale_max_y,
+                                                   self.scale_min_y)
+        random_z = self.random_change_in_direction(self.scale_max_z,
+                                                   self.scale_min_z)
+        cmds.scale(random_x, random_y, random_z, instance)
 
     def random_rotate_instance(self, instance):
-        rotate_random = rand.random()
+        random_x = self.random_change_in_direction(self.rot_max_x,
+                                                   self.rot_min_x)
+        random_y = self.random_change_in_direction(self.rot_max_y,
+                                                   self.rot_min_y)
+        random_z = self.random_change_in_direction(self.rot_max_z,
+                                                   self.rot_min_z)
+        cmds.rotate(random_x, random_y, random_z, instance)
+
+    def random_change_in_direction(self, max, min):
+        scale_random = rand.random()
         old_range = (1 - 0)
-        new_range = self.rot_max - self.rot_min
-        rot_val = (((rotate_random) * new_range) / old_range) + self.rot_min
-        cmds.rotate(rot_val, rot_val, rot_val, instance)
+        new_range = max - min
+        scale_val = (((scale_random - 0) * new_range) / old_range) + min
+        return scale_val
 
     def move_instance(self, instance, vert):
         pos_list = cmds.pointPosition(vert)
@@ -207,7 +291,8 @@ class Scatter(object):
 
     def scatter_func(self):
         for vertex in self.verts_to_scatter_on:
-            self.instanced_obj = cmds.instance(self.obj_to_scatter)
+            self.instanced_obj = cmds.instance\
+                (self.obj_to_scatter, smartTransform=True)
             self.random_scale_instance(self.instanced_obj)
             self.random_rotate_instance(self.instanced_obj)
             self.move_instance(self.instanced_obj, vertex)

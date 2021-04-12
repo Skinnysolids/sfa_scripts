@@ -94,7 +94,8 @@ class ScatterUI(QtWidgets.QDialog):
         self.to_scatter_label = QtWidgets.QLabel("Obj to Scatter:")
         self.scatter_on_label = QtWidgets.QLabel("Obj to Scatter On:")
         self.to_scatter_line_edit = QtWidgets.QLineEdit()
-        self.obj_to_scatter_btn = QtWidgets.QPushButton("Select Object")
+        self.obj_to_scatter_btn = QtWidgets.QPushButton("Select Object or "
+                                                        "Verts")
         self.scatter_on_line_edit = QtWidgets.QLineEdit()
         self.scatter_on = QtWidgets.QPushButton("Select Entire Selection")
         layout = QtWidgets.QHBoxLayout()
@@ -175,7 +176,7 @@ class Scatter(object):
         old_range = (1 - 0)
         new_range = self.scale_max - self.scale_min
         scale_val = (((scale_random - 0) * new_range) / old_range) + \
-                     self.scale_min
+            self.scale_min
 
         cmds.scale(scale_val, scale_val, scale_val, instance)
 

@@ -3,19 +3,19 @@ import logging
 from PySide2 import QtWidgets, QtCore
 from PySide2.QtWidgets import QFileDialog
 from shiboken2 import wrapInstance
-import maya.OpenMaya as om
-import maya.OpenMayaUI as omui
+import maya.OpenMaya as oM
+import maya.OpenMayaUI as omUI
 import maya.cmds as cmds
 import pymel.core as pnc
 from pymel.core.system import Path
-
+import random as rand
 
 log = logging.getLogger(__name__)
 
 
 def maya_main_window():
     """return the maya main window widget"""
-    main_window = omui.MQtUtil.mainWindow()
+    main_window = omUI.MQtUtil.mainWindow()
     return wrapInstance(long(main_window), QtWidgets.QWidget)
 
 
@@ -93,18 +93,16 @@ class ScatterUI(QtWidgets.QDialog):
         self.to_scatter_label = QtWidgets.QLabel("Obj to Scatter:")
         self.scatter_on_label = QtWidgets.QLabel("Obj to Scatter On:")
         self.to_scatter_line_edit = QtWidgets.QLineEdit()
-        self.to_scatter_btn = QtWidgets.QPushButton("Select Object")
+        self.obj_to_scatter_btn = QtWidgets.QPushButton("Select Object")
         self.scatter_on_line_edit = QtWidgets.QLineEdit()
-        self.scatter_on_object_button = QtWidgets.QPushButton("Select Object")
-        self.scatter_on_verts_button = QtWidgets.QPushButton("Select Vertices")
+        self.scatter_on = QtWidgets.QPushButton("Select Entire Selection")
         layout = QtWidgets.QHBoxLayout()
         layout.addWidget(self.to_scatter_label)
         layout.addWidget(self.to_scatter_line_edit)
-        layout.addWidget(self.to_scatter_btn)
+        layout.addWidget(self.obj_to_scatter_btn)
         layout.addWidget(self.scatter_on_label)
         layout.addWidget(self.scatter_on_line_edit)
-        layout.addWidget(self.scatter_on_object_button)
-        layout.addWidget(self.scatter_on_verts_button)
+        layout.addWidget(self.scatter_on)
         return layout
 
     def _create_button_ui(self):
@@ -119,12 +117,11 @@ class ScatterUI(QtWidgets.QDialog):
         """TO DO: CONNECT THE BUTTONS"""
         self.cancel_btn.clicked.connect(self.cancel)
 
-        self.to_scatter_btn.clicked.connect(self.select_scatter)
+        self.obj_to_scatter_btn.clicked.connect(self.select_scatter)
 
-        self.scatter_on_object_button.clicked.connect\
-            (self.select_to_scatter_obj)
-        self.scatter_on_verts_button.clicked.connect\
-            (self.select_to_scatter_verts)
+        self.scatter_on.clicked.connect\
+        (self.select_to_scatter_verts)
+
         self.scatter_btn.clicked.connect(self.scatter)
 
     @QtCore.Slot()
@@ -133,6 +130,7 @@ class ScatterUI(QtWidgets.QDialog):
                                     self.rand_scale_min.text(),
                                     self.rand_rot_max.text(),
                                     self.rand_rot_min.text())
+        self.scat.scatter_func()
 
     @QtCore.Slot()
     def select_to_scatter_obj(self):
@@ -157,6 +155,7 @@ class ScatterUI(QtWidgets.QDialog):
         """quits the dialogue"""
         self.close()
 
+
 class Scatter(object):
     def __init__(self):
         self.obj_to_scatter = ''
@@ -173,28 +172,37 @@ class Scatter(object):
         self.rot_max = float(rotmax)
         self.rot_min = float(rotmin)
 
+    def random_scale_instance(self, instance):
+        scale_random = rand.random()
+        old_range = (1 - 0)
+        new_range = self.scale_max - self.scale_min
+        scale_val = (((scale_random - 0) * new_range) / old_range) + \
+                    self.scale_min
 
-    def random_scale_instance(self):
-        pass
+        cmds.scale(scale_val, scale_val, scale_val, instance)
 
-    def random_rotate_instance(self):
-        pass
+    def random_rotate_instance(self, instance):
+        rotate_random = rand.random()
+        old_range = (1 - 0)
+        new_range = self.rot_max - self.rot_min
+        rot_val = (((rotate_random) * new_range) / old_range) + self.rot_min
+        cmds.rotate(rot_val, rot_val, rot_val, instance)
 
-    def select_an_object_to_scatter_to(self):
-        self.selected_objs = cmds.ls(sl=True)
-        self.obj_to_scatter = self.selected_objs[0]
-        self.verts_to_scatter_on = cmds.polyListComponentConversion(
-            self.obj_to_scatter, toVertex=True)
-        return str(self.verts_to_scatter_on)
+    def move_instance(self, instance, vert):
+        pos_list = cmds.pointPosition(vert)
+        pos_1 = pos_list[0]
+        pos_2 = pos_list[1]
+        pos_3 = pos_list[2]
+        cmds.move(pos_1, pos_2, pos_3, instance)
 
     def select_verts_to_scatter_to(self):
-        self.verts_to_scatter_on = cmds.ls(sl=True, flatten=True)
+        things_selected = cmds.ls(sl=True, flatten=True)
+        things_selected = cmds.polyListComponentConversion(
+            things_selected, toVertex=True)
+        self.verts_to_scatter_on = cmds.filterExpand(things_selected, sm=31)
         return str(self.verts_to_scatter_on)
 
     def select_obj_to_scatter(self):
         self.selected_objs = cmds.ls(sl=True)
-        self.obj_to_scatter_on = self.selected_objs[0]
-        return str(self.obj_to_scatter_on)
-
-    def Scatter(self):
-        pass
+        self.obj_to_scatter = self.selected_objs[0]
+        return str(self.obj_to_scatter)

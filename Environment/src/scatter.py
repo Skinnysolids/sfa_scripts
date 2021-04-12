@@ -92,10 +92,9 @@ class ScatterUI(QtWidgets.QDialog):
         """This creates two combobox select menus for selecting recipient
         and obj to scatter"""
         self.to_scatter_label = QtWidgets.QLabel("Obj to Scatter:")
-        self.scatter_on_label = QtWidgets.QLabel("Obj to Scatter On:")
+        self.scatter_on_label = QtWidgets.QLabel("Obj/Vertices to Scatter On:")
         self.to_scatter_line_edit = QtWidgets.QLineEdit()
-        self.obj_to_scatter_btn = QtWidgets.QPushButton("Select Object or "
-                                                        "Verts")
+        self.obj_to_scatter_btn = QtWidgets.QPushButton("Select Object")
         self.scatter_on_line_edit = QtWidgets.QLineEdit()
         self.scatter_on = QtWidgets.QPushButton("Select Entire Selection")
         layout = QtWidgets.QHBoxLayout()

@@ -21,6 +21,7 @@ def maya_main_window():
 
 class ScatterUI(QtWidgets.QDialog):
     """ScatterTool UI Class"""
+
     def __init__(self):
         super(ScatterUI, self).__init__(parent=maya_main_window())
         self.scat = Scatter()
@@ -119,8 +120,7 @@ class ScatterUI(QtWidgets.QDialog):
 
         self.obj_to_scatter_btn.clicked.connect(self.select_scatter)
 
-        self.scatter_on.clicked.connect\
-        (self.select_to_scatter_verts)
+        self.scatter_on.clicked.connect(self.select_to_scatter_verts)
 
         self.scatter_btn.clicked.connect(self.scatter)
 
@@ -134,8 +134,6 @@ class ScatterUI(QtWidgets.QDialog):
 
     @QtCore.Slot()
     def select_to_scatter_obj(self):
-        #TODO create error thingie if user selected verts and then pressed
-        #this button
         self.scatter_on_line_edit.setText(
             self.scat.select_an_object_to_scatter_to())
 
@@ -177,7 +175,7 @@ class Scatter(object):
         old_range = (1 - 0)
         new_range = self.scale_max - self.scale_min
         scale_val = (((scale_random - 0) * new_range) / old_range) + \
-                    self.scale_min
+                     self.scale_min
 
         cmds.scale(scale_val, scale_val, scale_val, instance)
 
@@ -206,3 +204,10 @@ class Scatter(object):
         self.selected_objs = cmds.ls(sl=True)
         self.obj_to_scatter = self.selected_objs[0]
         return str(self.obj_to_scatter)
+
+    def scatter_func(self):
+        for vertex in self.verts_to_scatter_on:
+            self.instanced_obj = cmds.instance(self.obj_to_scatter)
+            self.random_scale_instance(self.instanced_obj)
+            self.random_rotate_instance(self.instanced_obj)
+            self.move_instance(self.instanced_obj, vertex)

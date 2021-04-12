@@ -68,9 +68,9 @@ class ScatterUI(QtWidgets.QDialog):
 
     def _create_random_rotation_max(self):
         """creates a random rotation editable text box"""
-        self.random_rot_max_label_x = QtWidgets.QLabel("Random Rotation Max")
-        self.random_rot_max_label_y = QtWidgets.QLabel("Random Rotation Max")
-        self.random_rot_max_label_z = QtWidgets.QLabel("Random Rotation Max")
+        self.random_rot_max_label_x = QtWidgets.QLabel("Random Rotation Max X")
+        self.random_rot_max_label_y = QtWidgets.QLabel("Random Rotation Max Y")
+        self.random_rot_max_label_z = QtWidgets.QLabel("Random Rotation Max Z")
         self.rand_rot_max_x = QtWidgets.QLineEdit("180")
         self.rand_rot_max_y = QtWidgets.QLineEdit("180")
         self.rand_rot_max_z = QtWidgets.QLineEdit("180")

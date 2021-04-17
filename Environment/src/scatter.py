@@ -44,6 +44,7 @@ class ScatterUI(QtWidgets.QDialog):
         self.randomscalemin = self._create_random_scale_min()
         self.randomrotationmax = self._create_random_rotation_max()
         self.randomrotationmin = self._create_random_rotation_min()
+        self.randompercentage = self._create_random_percentage()
         self.main_lay = QtWidgets.QVBoxLayout()
         self.main_lay.addWidget(self.title_lbl)
         self.main_lay.addStretch()
@@ -54,6 +55,7 @@ class ScatterUI(QtWidgets.QDialog):
         self.main_lay.addLayout(self.randomrotationmax)
         self.main_lay.addLayout(self.randomrotationmin)
         self.main_lay.addStretch()
+        self.main_lay.addLayout(self.randompercentage)
         self.main_lay.addLayout(self.button_lay)
         self.setLayout(self.main_lay)
 
@@ -132,6 +134,18 @@ class ScatterUI(QtWidgets.QDialog):
         layout.addWidget(self.rand_scale_min_z)
         return layout
 
+    def _create_random_percentage(self):
+        self.random_percentage_label = QtWidgets.QLabel("Percentage of "
+                                                        "Vertices to scatter "
+                                                        "to")
+        self.random_percentage = QtWidgets.QDoubleSpinBox()
+        self.percentage_label = QtWidgets.QLabel("%")
+        layout = QtWidgets.QHBoxLayout()
+        layout.addWidget(self.random_percentage_label)
+        layout.addWidget(self.random_percentage)
+        layout.addWidget(self.percentage_label)
+        return layout
+
 
     def _create_obj_choose(self):
         """This creates two combobox select menus for selecting recipient
@@ -183,6 +197,7 @@ class ScatterUI(QtWidgets.QDialog):
                                       self.rand_scale_min_z.text(),
                                       self.rand_rot_max_z.text(),
                                       self.rand_rot_min_z.text())
+        self.scat.set_percentage(random_percentage)
         self.scat.scatter_func()
 
     @QtCore.Slot()
@@ -224,6 +239,7 @@ class Scatter(object):
         self.rot_min_x = 0
         self.rot_min_y = 0
         self.rot_min_z = 0
+        self.percentage_to_scatter_to = 100.00
 
     def set_scale_and_rot_x(self, scalemax, scalemin, rotmax, rotmin):
         self.scale_max_x = float(scalemax)
@@ -236,14 +252,15 @@ class Scatter(object):
         self.scale_min_y = float(scalemin)
         self.rot_max_y = float(rotmax)
         self.rot_min_y = float(rotmin)
-        pass
 
     def set_scale_and_rot_z(self, scalemax, scalemin, rotmax, rotmin):
         self.scale_max_z = float(scalemax)
         self.scale_min_z = float(scalemin)
         self.rot_max_z = float(rotmax)
         self.rot_min_z = float(rotmin)
-        pass
+
+    def set_percentage(self, percentage_chosen):
+        self.percentage_to_scatter_to = float(percentage_chosen)
 
     def random_scale_instance(self, instance):
         random_x = self.random_change_in_direction(self.scale_max_x,
@@ -253,6 +270,9 @@ class Scatter(object):
         random_z = self.random_change_in_direction(self.scale_max_z,
                                                    self.scale_min_z)
         cmds.scale(random_x, random_y, random_z, instance)
+
+    def choose_percentage_of_verts(self):
+        pass
 
     def random_rotate_instance(self, instance):
         random_x = self.random_change_in_direction(self.rot_max_x,
@@ -290,6 +310,9 @@ class Scatter(object):
         return str(self.obj_to_scatter)
 
     def scatter_func(self):
+        # need to modify verts to scatter on with percentage
+        self.choose_percentage_of_verts()
+
         for vertex in self.verts_to_scatter_on:
             self.instanced_obj = cmds.instance\
                 (self.obj_to_scatter, smartTransform=True)

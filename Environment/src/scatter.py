@@ -45,6 +45,7 @@ class ScatterUI(QtWidgets.QDialog):
         self.randomrotationmax = self._create_random_rotation_max()
         self.randomrotationmin = self._create_random_rotation_min()
         self.randompercentage = self._create_random_percentage()
+        self.normalcheckbox = self._create_normal_checkbox()
         self.main_lay = QtWidgets.QVBoxLayout()
         self.main_lay.addWidget(self.title_lbl)
         self.main_lay.addStretch()
@@ -56,6 +57,7 @@ class ScatterUI(QtWidgets.QDialog):
         self.main_lay.addLayout(self.randomrotationmin)
         self.main_lay.addStretch()
         self.main_lay.addLayout(self.randompercentage)
+        self.main_lay.addLayout(self.normalcheckbox)
         self.main_lay.addLayout(self.button_lay)
         self.setLayout(self.main_lay)
 
@@ -146,6 +148,16 @@ class ScatterUI(QtWidgets.QDialog):
         layout.addWidget(self.percentage_label)
         return layout
 
+    def _create_normal_checkbox(self):
+        self.normalcheck = QtWidgets.QCheckBox()
+        self.normalchecklabel = QtWidgets.QLabel("Scatter objects to align "
+                                                 "with normals of the vertices"
+                                                 "they're scattered to?")
+        self.normalcheck.setFixedWidth(15)
+        layout = QtWidgets.QHBoxLayout()
+        layout.addWidget(self.normalcheck)
+        layout.addWidget(self.normalchecklabel)
+        return layout
 
     def _create_obj_choose(self):
         """This creates two combobox select menus for selecting recipient

@@ -197,7 +197,7 @@ class ScatterUI(QtWidgets.QDialog):
                                       self.rand_scale_min_z.text(),
                                       self.rand_rot_max_z.text(),
                                       self.rand_rot_min_z.text())
-        self.scat.set_percentage(random_percentage)
+        self.scat.set_percentage(self.random_percentage.value())
         self.scat.scatter_func()
 
     @QtCore.Slot()
@@ -240,6 +240,8 @@ class Scatter(object):
         self.rot_min_y = 0
         self.rot_min_z = 0
         self.percentage_to_scatter_to = 100.00
+        self.verts_picked = list()
+        self.number_of_verts = 0
 
     def set_scale_and_rot_x(self, scalemax, scalemin, rotmax, rotmin):
         self.scale_max_x = float(scalemax)
@@ -261,6 +263,7 @@ class Scatter(object):
 
     def set_percentage(self, percentage_chosen):
         self.percentage_to_scatter_to = float(percentage_chosen)
+        self.percentage_to_scatter_to = self.percentage_to_scatter_to/100
 
     def random_scale_instance(self, instance):
         random_x = self.random_change_in_direction(self.scale_max_x,
@@ -271,8 +274,30 @@ class Scatter(object):
                                                    self.scale_min_z)
         cmds.scale(random_x, random_y, random_z, instance)
 
-    def choose_percentage_of_verts(self):
-        pass
+    def choose_percentage_of_vertices(self):
+        self.number_of_verts = 0
+        self.verts_picked = []
+        self.number_of_verts = int(self.verts_to_scatter_on.__len__() *\
+            self.percentage_to_scatter_to)
+        if(self.number_of_verts == self.verts_to_scatter_on.__len__()):
+            pass
+        elif (self.number_of_verts == 0):
+            pass
+        else:
+            verts_length = self.verts_to_scatter_on.__len__()
+            for i in range(self.number_of_verts):
+                self.choose_random_vertex_not_already_chosen()
+
+    def choose_random_vertex_not_already_chosen(self):
+        chosen_new_number = False
+        while(chosen_new_number == False):
+            chosen_new_number = True
+            num = rand.randint(0, (self.verts_to_scatter_on.__len__() - 1))
+            for x in self.verts_picked:
+                if(self.verts_to_scatter_on[num] == x):
+                    chosen_new_number = False
+
+        self.verts_picked.append(self.verts_to_scatter_on[num])
 
     def random_rotate_instance(self, instance):
         random_x = self.random_change_in_direction(self.rot_max_x,
@@ -311,9 +336,9 @@ class Scatter(object):
 
     def scatter_func(self):
         # need to modify verts to scatter on with percentage
-        self.choose_percentage_of_verts()
+        self.choose_percentage_of_vertices()
 
-        for vertex in self.verts_to_scatter_on:
+        for vertex in self.verts_picked:
             self.instanced_obj = cmds.instance\
                 (self.obj_to_scatter, smartTransform=True)
             self.random_scale_instance(self.instanced_obj)

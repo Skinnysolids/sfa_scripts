@@ -62,10 +62,7 @@ class ScatterUI(QtWidgets.QDialog):
         self.setLayout(self.main_lay)
 
     def _create_select_note(self):
-        self.note = QtWidgets.QLabel("Note: When multiple objects are "
-                                     "selected, the Select buttons "
-                                     "will only choose the first object "
-                                     "in that selection.")
+        self.note = QtWidgets.QLabel("")
         layout = QtWidgets.QHBoxLayout()
         layout.addWidget(self.note)
         return layout
@@ -139,8 +136,10 @@ class ScatterUI(QtWidgets.QDialog):
     def _create_random_percentage(self):
         self.random_percentage_label = QtWidgets.QLabel("Percentage of "
                                                         "Vertices to scatter "
-                                                        "to")
+                                                        "to:")
+        self.random_percentage_label.setFixedWidth(183)
         self.random_percentage = QtWidgets.QDoubleSpinBox()
+        self.random_percentage.setFixedWidth(80)
         self.percentage_label = QtWidgets.QLabel("%")
         layout = QtWidgets.QHBoxLayout()
         layout.addWidget(self.random_percentage_label)
@@ -152,7 +151,7 @@ class ScatterUI(QtWidgets.QDialog):
         self.normalcheck = QtWidgets.QCheckBox()
         self.normalchecklabel = QtWidgets.QLabel("Scatter objects to align "
                                                  "with normals of the vertices"
-                                                 "they're scattered to?")
+                                                 " they're scattered to?")
         self.normalcheck.setFixedWidth(15)
         layout = QtWidgets.QHBoxLayout()
         layout.addWidget(self.normalcheck)

@@ -7,6 +7,7 @@ import maya.OpenMaya as oM
 import maya.OpenMayaUI as omUI
 import maya.cmds as cmds
 import pymel.core as pnc
+import pymel.core.datatypes as dt
 from pymel.core.system import Path
 import random as rand
 
@@ -139,6 +140,8 @@ class ScatterUI(QtWidgets.QDialog):
                                                         "to:")
         self.random_percentage_label.setFixedWidth(183)
         self.random_percentage = QtWidgets.QDoubleSpinBox()
+        self.random_percentage.setMaximum(100.00)
+        self.random_percentage.setMinimum(0.00)
         self.random_percentage.setFixedWidth(80)
         self.percentage_label = QtWidgets.QLabel("%")
         layout = QtWidgets.QHBoxLayout()
@@ -294,15 +297,10 @@ class Scatter(object):
         self.number_of_verts = 0
         self.verts_picked = []
         self.number_of_verts = int(self.verts_to_scatter_on.__len__() *\
-            self.percentage_to_scatter_to)
-        if(self.number_of_verts == self.verts_to_scatter_on.__len__()):
-            pass
-        elif (self.number_of_verts == 0):
-            pass
-        else:
-            verts_length = self.verts_to_scatter_on.__len__()
-            for i in range(self.number_of_verts):
-                self.choose_random_vertex_not_already_chosen()
+        self.percentage_to_scatter_to)
+        verts_length = self.verts_to_scatter_on.__len__()
+        for i in range(self.number_of_verts):
+            self.choose_random_vertex_not_already_chosen()
 
     def choose_random_vertex_not_already_chosen(self):
         chosen_new_number = False
@@ -332,7 +330,8 @@ class Scatter(object):
         return scale_val
 
     def align_to_normals_function(self, instance, vertex):
-        print self.align_to_normals_value
+        constraint = cmds.normalConstraint(vertex, instance)
+        cmds.delete(constraint)
 
     def move_instance(self, instance, vert):
         pos_list = cmds.pointPosition(vert)
@@ -355,14 +354,19 @@ class Scatter(object):
 
     def scatter_func(self):
         # need to modify verts to scatter on with percentage
-        self.choose_percentage_of_vertices()
+        if(self.percentage_to_scatter_to == 100.00):
+            pass
+        elif(self.percentage_to_scatter_to == 0.00):
+            return 0
+        else:
+            self.choose_percentage_of_vertices()
 
         for vertex in self.verts_picked:
             self.instanced_obj = cmds.instance\
                 (self.obj_to_scatter, smartTransform=True)
             self.random_scale_instance(self.instanced_obj)
+            self.move_instance(self.instanced_obj, vertex)
             if(self.align_to_normals_value):
                 self.align_to_normals_function(self.instanced_obj, vertex)
             else:
                 self.random_rotate_instance(self.instanced_obj)
-            self.move_instance(self.instanced_obj, vertex)

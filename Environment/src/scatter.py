@@ -209,6 +209,7 @@ class ScatterUI(QtWidgets.QDialog):
                                       self.rand_rot_max_z.text(),
                                       self.rand_rot_min_z.text())
         self.scat.set_percentage(self.random_percentage.value())
+        self.scat.set_checkbox_normals(self.normalcheck.isChecked())
         self.scat.scatter_func()
 
     @QtCore.Slot()
@@ -253,6 +254,7 @@ class Scatter(object):
         self.percentage_to_scatter_to = 100.00
         self.verts_picked = list()
         self.number_of_verts = 0
+        self.align_to_normals_value = False
 
     def set_scale_and_rot_x(self, scalemax, scalemin, rotmax, rotmin):
         self.scale_max_x = float(scalemax)
@@ -275,6 +277,9 @@ class Scatter(object):
     def set_percentage(self, percentage_chosen):
         self.percentage_to_scatter_to = float(percentage_chosen)
         self.percentage_to_scatter_to = self.percentage_to_scatter_to/100
+
+    def set_checkbox_normals(self, checked):
+        self.align_to_normals_value = checked
 
     def random_scale_instance(self, instance):
         random_x = self.random_change_in_direction(self.scale_max_x,
@@ -326,6 +331,9 @@ class Scatter(object):
         scale_val = (((scale_random - 0) * new_range) / old_range) + min
         return scale_val
 
+    def align_to_normals_function(self, instance, vertex):
+        print self.align_to_normals_value
+
     def move_instance(self, instance, vert):
         pos_list = cmds.pointPosition(vert)
         pos_1 = pos_list[0]
@@ -353,5 +361,8 @@ class Scatter(object):
             self.instanced_obj = cmds.instance\
                 (self.obj_to_scatter, smartTransform=True)
             self.random_scale_instance(self.instanced_obj)
-            self.random_rotate_instance(self.instanced_obj)
+            if(self.align_to_normals_value):
+                self.align_to_normals_function(self.instanced_obj, vertex)
+            else:
+                self.random_rotate_instance(self.instanced_obj)
             self.move_instance(self.instanced_obj, vertex)

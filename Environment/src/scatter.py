@@ -47,6 +47,7 @@ class ScatterUI(QtWidgets.QDialog):
         self.randomrotationmin = self._create_random_rotation_min()
         self.randompercentage = self._create_random_percentage()
         self.normalcheckbox = self._create_normal_checkbox()
+        self.pushin = self._create_pushin()
         self.main_lay = QtWidgets.QVBoxLayout()
         self.main_lay.addWidget(self.title_lbl)
         self.main_lay.addStretch()
@@ -59,6 +60,7 @@ class ScatterUI(QtWidgets.QDialog):
         self.main_lay.addStretch()
         self.main_lay.addLayout(self.randompercentage)
         self.main_lay.addLayout(self.normalcheckbox)
+        self.main_lay.addLayout(self.pushin)
         self.main_lay.addLayout(self.button_lay)
         self.setLayout(self.main_lay)
 
@@ -160,6 +162,21 @@ class ScatterUI(QtWidgets.QDialog):
         layout.addWidget(self.normalcheck)
         layout.addWidget(self.normalchecklabel)
         return layout
+
+    def _create_pushin(self):
+        self.pushincheck = QtWidgets.QCheckBox()
+        self.pushincheck_label = QtWidgets.QLabel("Push scattered objs into "
+                                                  "their destination?")
+        self.pushin_length = QtWidgets.QDoubleSpinBox()
+        self.pushin_length_label = QtWidgets.QLabel("units they'll be "
+                                                    "pushed in")
+        layout = QtWidgets.QHBoxLayout()
+        layout.addWidget(self.pushincheck)
+        layout.addWidget(self.pushincheck_label)
+        layout.addWidget(self.pushin_length)
+        layout.addWidget(self.pushin_length_label)
+        return layout
+
 
     def _create_obj_choose(self):
         """This creates two combobox select menus for selecting recipient

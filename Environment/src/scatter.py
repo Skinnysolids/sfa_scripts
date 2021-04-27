@@ -170,13 +170,13 @@ class ScatterUI(QtWidgets.QDialog):
         self.pushin_length = QtWidgets.QDoubleSpinBox()
         self.pushin_length_label = QtWidgets.QLabel("units they'll be "
                                                     "pushed in")
+        self.pushincheck.setFixedWidth(15)
         layout = QtWidgets.QHBoxLayout()
         layout.addWidget(self.pushincheck)
         layout.addWidget(self.pushincheck_label)
         layout.addWidget(self.pushin_length)
         layout.addWidget(self.pushin_length_label)
         return layout
-
 
     def _create_obj_choose(self):
         """This creates two combobox select menus for selecting recipient
@@ -230,6 +230,8 @@ class ScatterUI(QtWidgets.QDialog):
                                       self.rand_rot_min_z.text())
         self.scat.set_percentage(self.random_percentage.value())
         self.scat.set_checkbox_normals(self.normalcheck.isChecked())
+        self.scat.set_pushin(self.pushincheck.isChecked(),
+                             self.pushin_length.value())
         self.scat.scatter_func()
 
     @QtCore.Slot()
@@ -275,6 +277,8 @@ class Scatter(object):
         self.verts_picked = list()
         self.number_of_verts = 0
         self.align_to_normals_value = False
+        self.push_in_objs = False
+        self.push_in_length = 0
 
     def set_scale_and_rot_x(self, scalemax, scalemin, rotmax, rotmin):
         self.scale_max_x = float(scalemax)
@@ -300,6 +304,10 @@ class Scatter(object):
 
     def set_checkbox_normals(self, checked):
         self.align_to_normals_value = checked
+
+    def set_pushin(self, checked, length):
+        self.push_in_objs = checked
+        self.push_in_length = length
 
     def random_scale_instance(self, instance):
         random_x = self.random_change_in_direction(self.scale_max_x,
@@ -357,6 +365,9 @@ class Scatter(object):
         pos_3 = pos_list[2]
         cmds.move(pos_1, pos_2, pos_3, instance)
 
+    def push_in_instance(self, instance):
+        cmds.move(0, self.push_in_length, 0, instance, localSpace=True)
+
     def select_verts_to_scatter_to(self):
         things_selected = cmds.ls(sl=True, flatten=True)
         things_selected = cmds.polyListComponentConversion(
@@ -387,3 +398,5 @@ class Scatter(object):
                 self.align_to_normals_function(self.instanced_obj, vertex)
             else:
                 self.random_rotate_instance(self.instanced_obj)
+            if(self.push_in_objs):
+                self.push_in_instance(self.instanced_obj)

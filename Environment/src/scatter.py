@@ -348,7 +348,8 @@ class Scatter(object):
                                                    self.rot_min_y)
         random_z = self.random_change_in_direction(self.rot_max_z,
                                                    self.rot_min_z)
-        cmds.rotate(random_x, random_y, random_z, instance)
+        cmds.rotate(random_x, random_y, random_z, instance, objectSpace=True,
+                    relative=True)
 
     def random_change_in_direction(self, max, min):
         scale_random = rand.random()
@@ -357,7 +358,7 @@ class Scatter(object):
         scale_val = (((scale_random - 0) * new_range) / old_range) + min
         return scale_val
 
-    def align_to_normals_function(self, instance, vertex):
+    def align_and_rotate_to_normals_function(self, instance, vertex):
         constraint = cmds.normalConstraint(vertex, instance)
         cmds.delete(constraint)
 
@@ -369,8 +370,7 @@ class Scatter(object):
         cmds.move(pos_1, pos_2, pos_3, instance)
 
     def push_in_instance(self, instance):
-
-        cmds.move(0, -self.push_in_length, 0, instance, localSpace=True,
+        cmds.move(-self.push_in_length, 0, 0, instance, objectSpace=True,
                   relative=True)
 
     def select_verts_to_scatter_to(self):
@@ -400,8 +400,14 @@ class Scatter(object):
             self.random_scale_instance(self.instanced_obj)
             self.move_instance(self.instanced_obj, vertex)
             if(self.align_to_normals_value):
-                self.align_to_normals_function(self.instanced_obj, vertex)
+                self.align_and_rotate_to_normals_function(self.instanced_obj,
+                                                          vertex)
+                if (self.push_in_objs):
+                    self.push_in_instance(self.instanced_obj)
+            elif (self.push_in_objs):
+                self.align_and_rotate_to_normals_function(self.instanced_obj,
+                                                          vertex)
+                self.push_in_instance(self.instanced_obj)
+                self.random_rotate_instance(self.instanced_obj)
             else:
                 self.random_rotate_instance(self.instanced_obj)
-            if(self.push_in_objs):
-                self.push_in_instance(self.instanced_obj)

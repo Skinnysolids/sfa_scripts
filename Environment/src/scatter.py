@@ -145,6 +145,7 @@ class ScatterUI(QtWidgets.QDialog):
         self.random_percentage.setMaximum(100.00)
         self.random_percentage.setMinimum(0.00)
         self.random_percentage.setFixedWidth(80)
+        self.random_percentage.setValue(100.00)
         self.percentage_label = QtWidgets.QLabel("%")
         layout = QtWidgets.QHBoxLayout()
         layout.addWidget(self.random_percentage_label)
@@ -171,6 +172,8 @@ class ScatterUI(QtWidgets.QDialog):
         self.pushin_length_label = QtWidgets.QLabel("units they'll be "
                                                     "pushed in")
         self.pushincheck.setFixedWidth(15)
+        self.pushin_length.setMinimum(-10.00)
+        self.pushin_length.setMaximum(10.00)
         layout = QtWidgets.QHBoxLayout()
         layout.addWidget(self.pushincheck)
         layout.addWidget(self.pushincheck_label)
@@ -366,7 +369,9 @@ class Scatter(object):
         cmds.move(pos_1, pos_2, pos_3, instance)
 
     def push_in_instance(self, instance):
-        cmds.move(0, self.push_in_length, 0, instance, localSpace=True)
+
+        cmds.move(0, -self.push_in_length, 0, instance, localSpace=True,
+                  relative=True)
 
     def select_verts_to_scatter_to(self):
         things_selected = cmds.ls(sl=True, flatten=True)

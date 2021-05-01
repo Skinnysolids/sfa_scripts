@@ -41,8 +41,10 @@ class ScatterUI(QtWidgets.QDialog):
         self.select_note = self._create_select_note()
         self.button_lay = self._create_button_ui()
         self.objchoose = self._create_obj_choose()
+        self.randomscalecheck = self._create_random_scale_check()
         self.randomscalemax = self._create_random_scale_max()
         self.randomscalemin = self._create_random_scale_min()
+        self.randomrotatecheck = self._create_random_rotate_check()
         self.randomrotationmax = self._create_random_rotation_max()
         self.randomrotationmin = self._create_random_rotation_min()
         self.randompercentage = self._create_random_percentage()
@@ -53,8 +55,10 @@ class ScatterUI(QtWidgets.QDialog):
         self.main_lay.addStretch()
         self.main_lay.addLayout(self.select_note)
         self.main_lay.addLayout(self.objchoose)
+        self.main_lay.addLayout(self.randomscalecheck)
         self.main_lay.addLayout(self.randomscalemax)
         self.main_lay.addLayout(self.randomscalemin)
+        self.main_lay.addLayout(self.randomrotatecheck)
         self.main_lay.addLayout(self.randomrotationmax)
         self.main_lay.addLayout(self.randomrotationmin)
         self.main_lay.addStretch()
@@ -68,6 +72,26 @@ class ScatterUI(QtWidgets.QDialog):
         self.note = QtWidgets.QLabel("")
         layout = QtWidgets.QHBoxLayout()
         layout.addWidget(self.note)
+        return layout
+
+    def _create_random_rotate_check(self):
+        self.random_rot_checkbox = QtWidgets.QCheckBox()
+        self.random_rot_checkbox.setFixedWidth(15)
+        self.random_rot_checkbox_label = QtWidgets.QLabel("Rotate objects "
+                                                          "randomly?")
+        layout = QtWidgets.QHBoxLayout()
+        layout.addWidget(self.random_rot_checkbox)
+        layout.addWidget(self.random_rot_checkbox_label)
+        return layout
+
+    def _create_random_scale_check(self):
+        self.random_scale_checkbox = QtWidgets.QCheckBox()
+        self.random_scale_checkbox.setFixedWidth(15)
+        self.random_scale_checkbox_label = QtWidgets.QLabel("Scale objects "
+                                                            "randomly?")
+        layout = QtWidgets.QHBoxLayout()
+        layout.addWidget(self.random_scale_checkbox)
+        layout.addWidget(self.random_scale_checkbox_label)
         return layout
 
     def _create_random_rotation_max(self):
@@ -172,8 +196,10 @@ class ScatterUI(QtWidgets.QDialog):
         self.pushin_length_label = QtWidgets.QLabel("units they'll be "
                                                     "pushed in")
         self.pushincheck.setFixedWidth(15)
+        self.pushincheck_label.setFixedWidth(500)
         self.pushin_length.setMinimum(-10.00)
         self.pushin_length.setMaximum(10.00)
+        self.pushin_length.setFixedWidth(100)
         layout = QtWidgets.QHBoxLayout()
         layout.addWidget(self.pushincheck)
         layout.addWidget(self.pushincheck_label)
@@ -235,6 +261,8 @@ class ScatterUI(QtWidgets.QDialog):
         self.scat.set_checkbox_normals(self.normalcheck.isChecked())
         self.scat.set_pushin(self.pushincheck.isChecked(),
                              self.pushin_length.value())
+        self.scat.set_random_checks(self.random_rot_checkbox.isChecked(),
+                                    self.random_scale_checkbox.isChecked())
         self.scat.scatter_func()
 
     @QtCore.Slot()
@@ -282,6 +310,12 @@ class Scatter(object):
         self.align_to_normals_value = False
         self.push_in_objs = False
         self.push_in_length = 0
+        self.rotate_checked = False
+        self.scale_checked = True
+
+    def set_random_checks(self, rot_checked, scale_checked):
+        self.rotate_checked = rot_checked
+        self.scale_checked = scale_checked
 
     def set_scale_and_rot_x(self, scalemax, scalemin, rotmax, rotmin):
         self.scale_max_x = float(scalemax)
@@ -397,8 +431,12 @@ class Scatter(object):
         for vertex in self.verts_picked:
             self.instanced_obj = cmds.instance\
                 (self.obj_to_scatter, smartTransform=True)
-            self.random_scale_instance(self.instanced_obj)
+
+            if(self.scale_checked):
+                self.random_scale_instance(self.instanced_obj)
+
             self.move_instance(self.instanced_obj, vertex)
+
             if(self.align_to_normals_value):
                 self.align_and_rotate_to_normals_function(self.instanced_obj,
                                                           vertex)
@@ -408,6 +446,7 @@ class Scatter(object):
                 self.align_and_rotate_to_normals_function(self.instanced_obj,
                                                           vertex)
                 self.push_in_instance(self.instanced_obj)
-                self.random_rotate_instance(self.instanced_obj)
-            else:
+                if(self.rotate_checked):
+                    self.random_rotate_instance(self.instanced_obj)
+            elif(self.rotate_checked):
                 self.random_rotate_instance(self.instanced_obj)

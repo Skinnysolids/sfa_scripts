@@ -358,15 +358,16 @@ class Scatter(object):
     def choose_percentage_of_vertices(self):
         self.number_of_verts = 0
         self.verts_picked = []
-        self.number_of_verts = int(self.verts_to_scatter_on.__len__() *\
-        self.percentage_to_scatter_to)
+        self.number_of_verts = int(self.verts_to_scatter_on.__len__() *
+                                   self.percentage_to_scatter_to)
         verts_length = self.verts_to_scatter_on.__len__()
         for i in range(self.number_of_verts):
             self.choose_random_vertex_not_already_chosen()
 
     def choose_random_vertex_not_already_chosen(self):
+        num = 0
         chosen_new_number = False
-        while(chosen_new_number == False):
+        while(chosen_new_number is False):
             chosen_new_number = True
             num = rand.randint(0, (self.verts_to_scatter_on.__len__() - 1))
             for x in self.verts_picked:
@@ -429,8 +430,8 @@ class Scatter(object):
             self.choose_percentage_of_vertices()
 
         for vertex in self.verts_picked:
-            self.instanced_obj = cmds.instance\
-                (self.obj_to_scatter, smartTransform=True)
+            self.instanced_obj = cmds.instance(self.obj_to_scatter,
+                                               smartTransform=True)
 
             if(self.scale_checked):
                 self.random_scale_instance(self.instanced_obj)
